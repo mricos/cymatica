@@ -1,5 +1,5 @@
-cymatica-mac-build(){
-  g++ main.cpp -o output \
+build(){
+  g++  main.cpp  -o output \
   -I/opt/homebrew/include \
    -L/opt/homebrew/lib \
    -lglfw  \
@@ -7,6 +7,6 @@ cymatica-mac-build(){
    -DGL_SILENCE_DEPRECATION
 }
 
-cymatica-mac-run(){
+run(){
   ./output
 }

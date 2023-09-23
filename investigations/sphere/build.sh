@@ -1,5 +1,5 @@
-cymatical_build_mac(){
-  g++ main.cpp -o output \
+build(){
+  g++ sphere.cpp -o ./output \
   -I/opt/homebrew/include \
    -L/opt/homebrew/lib \
    -lglfw  \
@@ -7,6 +7,6 @@ cymatical_build_mac(){
    -DGL_SILENCE_DEPRECATION
 }
 
-cymatical_run_mac(){
+run(){
   ./output
 }
