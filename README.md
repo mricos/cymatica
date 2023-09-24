@@ -1,6 +1,6 @@
 # Digital Cymatics
 
-**Abstract:** Digital Cymatics is an evolution of the traditional study of making sound waves visible. Drawing inspiration from tools and techniques such as oscilloscopes, Chladni plates, and spherical harmonics, this paper introduces a modern approach to visualizing sound in the digital realm. At its core is a realtime system centered around a database named Nexus, with Cymetica responding in real-time to changes in this database.
+**Abstract:** Digital Cymatics is an evolution of the traditional study of making sound waves visible. Drawing inspiration from tools and techniques such as oscilloscopes, Chladni plates, and spherical harmonics, this dcoument introduces a modern approach to visualizing sound in the digital realm. At its core is a realtime sound processing engine called estovox. Esto
 
 ## Introduction
 
