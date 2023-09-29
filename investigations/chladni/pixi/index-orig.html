@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chladni Patterns in Pixi.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.1/pixi.min.js"></script>
+</head>
+
+<body>
+
+<script>
+    const app = new PIXI.Application({
+        width: 500,
+        height: 500,
+        backgroundColor: 0x000000
+    });
+
+    document.body.appendChild(app.view);
+    const backgroundContainer = new PIXI.Container();
+
+    app.stage.addChild(backgroundContainer);
+    const backgroundGraphics = new PIXI.Graphics();
+    backgroundContainer.addChild(backgroundGraphics);
+    // This ensures that children are rendered in the order they are added
+    backgroundContainer.sortableChildren = true;
+
+    debugText = new PIXI.Text('', {
+        fontFamily: 'monospace',
+        fontSize: 14,
+        fill: 0xffffff
+    });
+    app.stage.addChild(debugText);
+
+
+    class Chladni {
+        constructor(N_, draggablePoints) {
+            this.N = N_;
+            this.p = [];
+            this.V = 0.5;
+            this.F = 0.15;
+            this.PV = -1.5;
+            this.d = 1;
+            this.nodes = draggablePoints.map(
+                    point => ({ x: point.x, y: point.y })
+                );
+            this.T = 0;
+            this.TT = 1;
+            this.particles = [];
+        }
+
+        init() {
+            for (let i = 0; i < this.N; i++) {
+                const particle = new PIXI.Graphics();
+                particle.beginFill(0xFFFFFF);
+                particle.drawCircle(0, 0, 2);
+                particle.endFill();
+                app.stage.addChild(particle);
+                this.particles.push(particle);
+                this.p[i] = { x: Math.random() * app.view.width,
+                    y: Math.random() * app.view.height };
+            }
+
+        }
+
+        run() {
+
+            for (let i = 0; i < this.N; i++) {
+                this.R = 0;
+                this.D = 0;
+                this.C = 0;
+                for (let j = 0; j < this.nodes.length; j++) {
+                    let sx = this.nodes[j].x;
+                    let sy = this.nodes[j].y;
+
+                    // Calculation for C ""
+                    // L is distance from particle to point attractor
+                    this.L = Math.sqrt((this.p[i].x - sx) * (this.p[i].x - sx)
+                        + (this.p[i].y - sy) * (this.p[i].y - sy));
+                    //
+                    this.C += Math.sin(2 * Math.PI * this.F
+                        * (this.T - (this.L / this.V)) / 60);
+
+                    // Calculation for R
+                    this.L = Math.sqrt((this.p[i].x + this.d - sx) *
+                        (this.p[i].x + this.d - sx) + (this.p[i].y - sy) *
+                        (this.p[i].y - sy));
+                    this.R += Math.sin(2 * Math.PI * this.F *
+                        (this.T - (this.L / this.V)) / 60);
+
+                    // Calculation for D
+                    this.L = Math.sqrt((this.p[i].x - sx) *
+                        (this.p[i].x - sx) + (this.p[i].y + this.d - sy) *
+                        (this.p[i].y + this.d - sy));
+                    this.D += Math.sin(2 * Math.PI * this.F *
+                        (this.T - (this.L / this.V)) / 60);
+             }
+                this.updateParticlePosition(i);
+                this.draw(i);
+            }
+            this.T += this.TT;
+        }
+
+        updateParticlePosition(i) {
+            this.L = Math.sqrt(((this.R - this.C) ** 2) + ((this.D - this.C) ** 2));
+            let VX = this.PV * (this.R - this.C) / this.L;
+            let VY = this.PV * (this.D - this.C) / this.L;
+            this.p[i].x += VX;
+            this.p[i].y += VY;
+
+            // Check if particle is out of bounds and reset its position if necessary
+            if (this.p[i].x < 0 || this.p[i].x > app.view.width ||
+                this.p[i].y < 0 || this.p[i].y > app.view.height || this.C < 0.0025) {
+                    this.p[i].x = Math.random() * app.view.width;
+                    this.p[i].y = Math.random() * app.view.height;
+            }
+        }
+
+        draw(i) {
+            const particle = this.particles[i];
+            particle.x = this.p[i].x;
+            particle.y = this.p[i].y;
+            particle.tint = PIXI.utils.rgb2hex([1 - this.C, 1 - this.C, 1 - this.C]);
+        }
+    }
+
+    class Draggable {
+        constructor() {
+            this.x = Math.random() * app.view.width/5 + app.view.width/2;
+            this.y = Math.random() * app.view.height/5 + app.view.height/2;
+            this.d = 20;
+            this.bs = 10;
+            this.dragging = false;
+            this.rollover = false;
+            this.offsetX = 0;
+            this.offsetY = 0;
+            this.graphics = new PIXI.Graphics();
+            this.show();
+        }
+
+        show() {
+            this.graphics.interactive = true;
+            this.graphics.buttonMode = true;
+            this.graphics.on('pointerdown', this.pressed.bind(this))
+                .on('pointerup', this.released.bind(this))
+                .on('pointerupoutside', this.released.bind(this))
+                .on('pointermove', this.update.bind(this));
+            app.stage.addChild(this.graphics);
+            this.draw();
+        }
+
+        draw() {
+            this.graphics.clear();
+            this.graphics.beginFill(0xFFFFFF);
+            this.graphics.drawCircle(this.x, this.y, this.d / 2);
+            this.graphics.endFill();
+        }
+
+        pressed(event) {
+            const distance = Math.sqrt((event.data.global.x - this.x) ** 2 +
+                (event.data.global.y - this.y) ** 2);
+            if (distance < this.d / 2) {
+                this.dragging = true;
+                this.offsetX = this.x - event.data.global.x;
+                this.offsetY = this.y - event.data.global.y;
+            }
+        }
+
+        released() {
+            this.dragging = false;
+            console.log(this.x, this.y);
+        }
+
+        update(event) {
+            if (this.dragging) {
+                this.x = event.data.global.x + this.offsetX;
+                this.y = event.data.global.y + this.offsetY;
+                this.draw();
+            }
+        }
+    }
+
+const chladniInstance = new Chladni(1000, [{ x: 250, y: 250 }]);
+chladniInstance.init();
+
+const draggablePoints = [];
+for (let i = 0; i < 3; i++) {
+    const dragPoint = new Draggable();
+    draggablePoints.push(dragPoint);
+}
+
+
+const gridSpacing = 10; // Adjust as needed for performance vs. resolution
+
+function drawBackground() {
+    for (let x = 0; x < app.view.width; x += gridSpacing) {
+        for (let y = 0; y < app.view.height; y += gridSpacing) {
+            let intensity = computeIntensityAt(x, y);
+            let color = mapIntensityToColor(intensity);
+            drawSquareAt(x, y, color);
+        }
+    }
+}
+
+function computeIntensityAt(x, y) {
+    let C = 0;
+    for (let j = 0; j < chladniInstance.nodes.length; j++) {
+        let sx = chladniInstance.nodes[j].x;
+        let sy = chladniInstance.nodes[j].y;
+        let L = Math.sqrt((x - sx) * (x - sx) + (y - sy) * (y - sy));
+        C += Math.sin(2 * Math.PI * chladniInstance.F * (chladniInstance.T
+            - (L / chladniInstance.V)) / 60);
+    }
+    return Math.abs(C);
+}
+
+function mapIntensityToColor(intensity) {
+    let colorValue = Math.min(1, intensity) * 255;
+    return PIXI.utils.rgb2hex([colorValue, colorValue, colorValue]);
+}
+
+function drawSquareAt(x, y, color) {
+    let square = new PIXI.Graphics();
+    square.beginFill(color);
+    square.drawRect(x, y, gridSpacing, gridSpacing);
+    square.endFill();
+    backgroundContainer.addChild(square);
+}
+
+
+app.ticker.add(() => {
+    if (showGradient) {
+        drawGradientField();
+    }
+   for (let i = 0; i < draggablePoints.length; i++) {
+    chladniInstance.nodes[i] =
+        { x: draggablePoints[i].x, y: draggablePoints[i].y };
+    }
+    chladniInstance.run();
+});
+
+function cursorPositionCallback(event) {
+    // Display the x and y values in the corner
+    displayCoordinates(cursorX, cursorY);
+}
+
+// Utility function to map a value from one range to another
+function mapValue(value, start1, stop1, start2, stop2) {
+    return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+}
+
+const gridSize = 10; // or any other value you prefer
+
+function drawGradientField() {
+    backgroundGraphics.clear();
+
+    let maxInfluence = -Infinity;
+    let minInfluence = Infinity;
+
+    // First pass to get min and max influence
+    for (let x = 0; x < app.view.width; x += gridSize) {
+        for (let y = 0; y < app.view.height; y += gridSize) {
+            let influence = 0;
+            for (let node of chladniInstance.nodes) {
+                let distance = Math.sqrt((x - node.x)
+                                ** 2 + (y - node.y) ** 2);
+                influence += Math.sin(2 * Math.PI * chladniInstance.F
+                    * (chladniInstance.T - (distance / chladniInstance.V)) / 60);
+            }
+            maxInfluence = Math.max(maxInfluence, influence);
+            minInfluence = Math.min(minInfluence, influence);
+        }
+    }
+
+    // Second pass to draw the gradient
+    for (let x = 0; x < app.view.width; x += gridSize) {
+        for (let y = 0; y < app.view.height; y += gridSize) {
+            let influence = 0;
+            for (let node of chladniInstance.nodes) {
+                let distance = Math.sqrt((x - node.x)
+                                ** 2 + (y - node.y) ** 2);
+                influence += Math.sin(2 * Math.PI * chladniInstance.F
+                            * (chladniInstance.T -
+                                (distance / chladniInstance.V)) / 60);
+            }
+            let norm =
+                (influence - minInfluence) / (maxInfluence - minInfluence);
+            backgroundGraphics.beginFill(
+                PIXI.utils.rgb2hex([norm,norm,norm]));
+            backgroundGraphics.drawRect(x, y, gridSize, gridSize);
+            backgroundGraphics.endFill();
+        }
+    }
+}
+
+
+function displayCoordinates(x, y, chladni) {
+    // Extract non-circular properties from chladni for display
+    const debugInfo = {
+        N: chladni.N,
+        V: chladni.V,
+        F: chladni.F,
+        PV: chladni.PV,
+        d: chladni.d,
+        T: chladni.T,
+        TT: chladni.TT
+    };
+
+    // Update the PIXI Text object
+    debugText.text = `x: ${x}, y: ${y}\n${JSON.stringify(debugInfo, null, 2)}`;
+    //debugText.x = x + 10; // Offset to avoid overlapping with the cursor
+    //debugText.y = y;
+}
+
+// In your main code where you handle mouse movement and the shift key:
+document.addEventListener('mousemove', function(event) {
+    if (event.shiftKey===true && event.ctrlKey===false) {
+        chladniInstance.V = mapValue(event.clientX, 0,
+            app.view.width, .01, 1);
+        chladniInstance.PV = mapValue(event.clientY, 0,
+             app.view.height, 0, 1.5);
+    }
+
+    if (event.ctrlKey===true) {
+        chladniInstance.F = mapValue(event.clientX, 0,
+            app.view.width, 0, .6);
+        chladniInstance.TT = mapValue(event.clientY, 0,
+             app.view.height, .00001, 1);
+    }
+
+    if (event.buttons === 1 && event.shiftKey===true) {
+        chladniInstance.d = mapValue(event.clientX, 0,
+            app.view.width, 0, 1);
+        chladniInstance.s= mapValue(event.clientY, 0,
+             app.view.height, .0001, 1);
+        chladniInstance.init();
+    }
+    displayCoordinates(event.clientX, event.clientY, chladniInstance);
+});
+
+let showGradient = false;
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'g') {
+        showGradient = !showGradient;
+    }
+
+    if (showGradient) {
+            drawGradientField();
+    } else {
+            backgroundGraphics.clear();
+        }
+});
+
+</script>
+
+</body>
+
+</html>
