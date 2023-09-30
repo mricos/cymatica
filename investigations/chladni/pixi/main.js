@@ -1,18 +1,22 @@
 import Parameters from './Parameters.js';
-import Chladni from './Chladni.js';
+import Chladni from './Chladni.js.crap/index.js';
 import Grid from './Grid.js';
 import Draggable from './Draggable.js';
 
 // Creating the PIXI Application
 const app = new PIXI.Application({
-    width: 500,
-    height: 500,
+    width: 700,
+    height: 800,
     backgroundColor: 0x000000,
     resolution: window.devicePixelRatio || 1,
 });
 
+window.addEventListener('resize', () => {
+    app.renderer.resize(window.innerWidth, window.innerHeight);
+});
+
 // Creating an instance of the Chladni class
-app.chladni = new Chladni(app, 1000, [{ x: 250, y: 250 }]);
+app.chladni = new Chladni(app, 10000, [{ x: 250, y: 250 }]);
 
 // Initialize app.bgContainer before creating the Grid instance
 app.gradientContainer  = new PIXI.Container();
@@ -25,10 +29,12 @@ const grid = new Grid(app);
 
 
 const draggablePoints = [];
-for (let i = 0; i < 3; i++) {
-    const dragPoint = new Draggable(app);
-    draggablePoints.push(dragPoint);
-}
+
+
+draggablePoints.push(new Draggable(app, 50, 50));
+draggablePoints.push(new Draggable(app, 50, 650));
+draggablePoints.push(new Draggable(app, 650, 50));
+draggablePoints.push(new Draggable(app, 650, 650));
 
 const params = new Parameters(app, app.chladni, draggablePoints, grid);
 params.setApp(app);

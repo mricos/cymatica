@@ -1,10 +1,19 @@
 class Draggable {
-    constructor(app) {
+    constructor(app,x=-1,y=-1) {
         this.app = app;
-        this.x = Math.random() * app.view.width/5 + app.view.width/2;
-        this.y = Math.random() * app.view.height/5 + app.view.height/2;
+        if(x==-1){
+            this.x = Math.random() * app.view.width/5 + app.view.width/2;
+        } else {
+            this.x=x;
+        }
+        if(y==-1){
+            this.y = Math.random() * app.view.height/5 + app.view.height/2;
+        } else {
+            this.y=y;
+        }
         this.d = 20;
         this.bs = 10;
+        this.boundUpdate = (event) => this.update(event);
         this.dragging = false;
         this.rollover = false;
         this.offsetX = 0;
@@ -19,7 +28,7 @@ class Draggable {
         this.graphics.on('pointerdown', this.pressed.bind(this))
             .on('pointerup', this.released.bind(this))
             .on('pointerupoutside', this.released.bind(this))
-            .on('pointermove', this.update.bind(this));
+            .on('pointermove', this.boundUpdate);  // Changed this line
         this.app.stage.addChild(this.graphics);
         this.draw();
     }
@@ -39,17 +48,26 @@ class Draggable {
             this.offsetX = this.x - event.data.global.x;
             this.offsetY = this.y - event.data.global.y;
         }
+
+        if (this.dragging) {
+            // Attach the 'pointermove' event to the app.view when dragging starts
+            this.app.view.addEventListener('pointermove', this.boundUpdate);
+        }
     }
 
     released() {
         this.dragging = false;
         console.log(this.x, this.y);
+
+        // Remove the 'pointermove' event from the window when dragging stops
+        this.app.view.removeEventListener('pointermove', this.boundUpdate);
     }
 
     update(event) {
         if (this.dragging) {
-            this.x = event.data.global.x + this.offsetX;
-            this.y = event.data.global.y + this.offsetY;
+            const eventData = event.data ? event.data.global : event;
+            this.x = eventData.x + this.offsetX;
+            this.y = eventData.y + this.offsetY;
             this.draw();
         }
     }
