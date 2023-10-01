@@ -59,13 +59,15 @@ export default class Parameters {
     handleMouseEvents(event){
         let chladni=this.chladni;
         let app=this.app;
-        this.parametersChanged = true;  // Set the flag when parameters change
+        //this.parametersChanged = false;  // Set the flag when parameters change
 
         if (event.shiftKey===true && event.ctrlKey===false) {
             chladni.V = mapValue(event.clientX, 0,
             app.view.width, .01, 1);
             chladni.PV = mapValue(event.clientY, 0,
             app.view.height, 0, 1.5);
+            this.parametersChanged = true;  // Set the flag when parameters change
+
         }
 
     }
@@ -86,13 +88,19 @@ export default class Parameters {
         document.addEventListener('keydown', event => {
             if (event.key === 'g') {
                 this.grid.showGradient = !this.grid.showGradient;
+                this.parametersChanged = true;  // Set the flag when parameters change
+
             }
             if (event.key === 'ArrowUp') {
                 this.chladni.TT *= 1.1;
+
             }
             if (event.key === 'ArrowDown') {
                 this.chladni.TT /= 1.1;
             }
+            if (event.key === 'g') {
+            }
+
         });
 
 

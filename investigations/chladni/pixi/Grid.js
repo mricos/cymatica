@@ -57,6 +57,94 @@ export default class Grid {
     }
 
     drawGradientField() {
+        const { chladni, app, gridSize } = this;
+        const { width, height } = app.renderer;
+
+        const influences = [];
+        let maxInfluence = -Infinity;
+        let minInfluence = Infinity;
+
+        // Calculate influences and find min/max
+        for (let x = 0; x < width; x += gridSize) {
+            for (let y = 0; y < height; y += gridSize) {
+                let influence = chladni.nodes.reduce((sum, node) => {
+                    const dx = x - node.x;
+                    const dy = y - node.y;
+                    const distance = Math.sqrt(dx*dx + dy*dy);
+                    return sum + Math.sin(2 * Math.PI * chladni.F * (chladni.T - (distance / chladni.V)) / 60);
+                }, 0);
+
+                influences.push({x, y, influence});
+
+                maxInfluence = Math.max(maxInfluence, influence);
+                minInfluence = Math.min(minInfluence, influence);
+            }
+        }
+
+        const range = maxInfluence - minInfluence;
+
+        // Use a single PIXI.Graphics object to batch draw calls
+        const graphics = new PIXI.Graphics();
+        app.gradientContainer.addChild(graphics);
+
+        // Draw the grid
+        influences.forEach(({x, y, influence}) => {
+            const norm = (influence - minInfluence) / range;
+
+            graphics.beginFill(PIXI.utils.rgb2hex([norm, norm, norm]));
+            graphics.drawRect(x, y, gridSize, gridSize);
+            graphics.endFill();
+        });
+    }
+
+
+    drawGradientFieldOld2() {
+        const { chladni, app, gridSize } = this;
+        const { width, height } = app.renderer;
+
+        const influences = new Float32Array((width / gridSize) * (height / gridSize));
+        let maxInfluence = -Infinity;
+        let minInfluence = Infinity;
+
+        // Calculate influences and find min/max
+        for (let x = 0; x < width; x += gridSize) {
+            for (let y = 0; y < height; y += gridSize) {
+                let influence = chladni.nodes.reduce((sum, node) => {
+                    const dx = x - node.x;
+                    const dy = y - node.y;
+                    const distance = Math.sqrt(dx*dx + dy*dy);
+                    return sum + Math.sin(2 * Math.PI * chladni.F * (chladni.T - (distance / chladni.V)) / 60);
+                }, 0);
+
+                const index = (y / gridSize) * (width / gridSize) + (x / gridSize);
+                influences[index] = influence;
+
+                maxInfluence = Math.max(maxInfluence, influence);
+                minInfluence = Math.min(minInfluence, influence);
+            }
+        }
+
+        const range = maxInfluence - minInfluence;
+
+        // Use a single PIXI.Graphics object to batch draw calls
+        const graphics = new PIXI.Graphics();
+        app.gradientContainer.addChild(graphics);
+
+        // Draw the grid
+        for (let x = 0; x < width; x += gridSize) {
+            for (let y = 0; y < height; y += gridSize) {
+                const index = (y / gridSize) * (width / gridSize) + (x / gridSize);
+                const norm = (influences[index] - minInfluence) / range;
+
+                graphics.beginFill(PIXI.utils.rgb2hex([norm, norm, norm]));
+                graphics.drawRect(x, y, gridSize, gridSize);
+                graphics.endFill();
+            }
+        }
+    }
+
+
+    drawGradientFieldOld() {
         let chladni = this.chladni;
         let app = this.app;
         let gridSize = this.gridSize;
