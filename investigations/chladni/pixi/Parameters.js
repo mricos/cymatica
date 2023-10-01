@@ -47,11 +47,11 @@ export default class Parameters {
             PV: chladni.PV,
             d: chladni.d,
             T: chladni.T,
-            TT: chladni.TT
+            TT: chladni.TT,
         };
 
         // Update the PIXI Text object
-        debugText.text =
+        debugText.text =d
             `x: ${x}, y: ${y}\n${JSON.stringify(debugInfo, null, 2)}`;
     }
 

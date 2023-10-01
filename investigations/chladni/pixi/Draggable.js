@@ -38,10 +38,10 @@ class Draggable {
         this.graphics.beginFill(0xFFFFFF);
         this.graphics.drawCircle(this.x, this.y, this.d / 2);
         this.graphics.endFill();
-        // Check if app.params is defined before accessing its properties
-        if (this.app.params) {
-            this.app.params.parametersChanged = true;  // Set the flag when parameters change
-        }
+            // Check if app.params is defined before accessing its properties
+            if (this.app.params) {
+                this.app.params.parametersChanged = true;  // Set the flag when parameters change
+            }
 
     }
 

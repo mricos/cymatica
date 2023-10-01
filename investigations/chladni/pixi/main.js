@@ -3,12 +3,14 @@ import Grid from './Grid.js';
 import Chladni from './Chladni.js';
 import Draggable from './Draggable.js';
 import Popup from './Popup.js';
+import FPSCounter from './FpsCounter.js';
 
 // Creating the PIXI Application
 const app = new PIXI.Application({
     width: window.innerWidth,
     height: window.innerHeight,
     backgroundColor: 0x000000,
+    interactive: true,  // Ensure this is set to true
     resolution: window.devicePixelRatio || 1,
 });
 
@@ -25,9 +27,8 @@ app.chlandiContainer = new PIXI.Container();
 
 app.stage.addChild(app.gradientContainer);
 app.stage.addChild(app.chlandiContainer);
-//app.bgContainer.sortableChildren = true; // render in order added
+//app.chlandiContainer.sortableChildren = true; // render in order added
 const grid = new Grid(app);
-const popup = new Popup(app, 10,10);
 
 
 
@@ -42,11 +43,15 @@ let params=app.params;
 app.params.init();
 grid.init();
 app.chladni.init();
-popup.init();
+const fpsCounter = new FPSCounter(app); // Create an FPS counter
+
+
+
 
 app.ticker.add(() => {
     let params = app.params;
-    popup.displayParameters();
+    fpsCounter.update(app.ticker.lastTime); // Update the FPS counter
+    //popup.displayParameters();
 
         // Check if parameters have changed and the gradient is visible
     if (params.parametersChanged && grid.showGradient) {
@@ -69,3 +74,14 @@ app.ticker.add(() => {
     app.chladni.run();
 });
 document.body.appendChild(app.view);
+
+app.stage.sortableChildren = true;
+
+// Example usage
+const popup = new Popup(app);
+popup.addVariable("N", app.chladni);
+popup.addVariable("V", app.chladni, {min:0, max:2, stride:0.01});
+app.stage.interactive = true;
+//app.stage.on('pointermove', (event) => {
+//    console.log(event.data.global.x, event.data.global.y);
+//});
