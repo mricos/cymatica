@@ -1,5 +1,5 @@
 class Chladni {
-    constructor( app, N_ ) {
+    constructor(app, N_, draggablePoints) {
         this.app = app;
         this.N = N_ || 1000;
         this.p = [];
@@ -7,35 +7,29 @@ class Chladni {
         this.F = 0.15;
         this.PV = -1.5;
         this.d = 1;
-        this.nodes = [];
+        this.nodes = draggablePoints.map(
+            point => ({ x: point.x, y: point.y })
+        );
         this.T = 0;
         this.TT = 1;
         this.particles = [];
-        this.container = new PIXI.Container();
-        this.init();
     }
 
-    init(n=1000) {
+    init() {
         let app = this.app;
-        this.nodes-[{x: app.view.width, y: app.view.height}]
         for (let i = 0; i < this.N; i++) {
             const particle = new PIXI.Graphics();
             particle.beginFill(0xFFFFFF);
             particle.drawCircle(0, 0, 2);
             particle.endFill();
-            this.container.addChild(particle);
+            app.stage.addChild(particle);
             this.particles.push(particle);
-            this.p[i] = {   x: Math.random() * app.view.width,
-                            y: Math.random() * app.view.height };
+            this.p[i] = { x: Math.random() * app.view.width, y: Math.random() * app.view.height };
         }
-
     }
 
-    updateNodes(nodes) {
-        this.nodes = nodes.map(point => ({ x: point.x, y: point.y }));
-    }
 
-    update() {
+    run() {
         if (!this.nodes ||  !this.nodes[0]) return;
 
         for (let i = 0; i < this.N; i++) {
@@ -44,21 +38,14 @@ class Chladni {
                 let sx = this.nodes[j].x;
                 let sy = this.nodes[j].y;
 
-                let L = Math.sqrt((this.p[i].x - sx) ** 2 +
-                    (this.p[i].y - sy) ** 2);
+                let L = Math.sqrt((this.p[i].x - sx) ** 2 + (this.p[i].y - sy) ** 2);
+                C += Math.sin(2 * Math.PI * this.F * (this.T - (L / this.V)) / 60);
 
-                C += Math.sin(2 * Math.PI * this.F *
-                    (this.T - (L / this.V)) / 60);
+                L = Math.sqrt((this.p[i].x + this.d - sx) ** 2 + (this.p[i].y - sy) ** 2);
+                R += Math.sin(2 * Math.PI * this.F * (this.T - (L / this.V)) / 60);
 
-                L = Math.sqrt((this.p[i].x + this.d - sx) ** 2 +
-                    (this.p[i].y - sy) ** 2);
-                R += Math.sin(2 * Math.PI * this.F *
-                    (this.T - (L / this.V)) / 60);
-
-                L = Math.sqrt((this.p[i].x - sx) ** 2 +
-                    (this.p[i].y + this.d - sy) ** 2);
-                D += Math.sin(2 * Math.PI * this.F *
-                    (this.T - (L / this.V)) / 60);
+                L = Math.sqrt((this.p[i].x - sx) ** 2 + (this.p[i].y + this.d - sy) ** 2);
+                D += Math.sin(2 * Math.PI * this.F * (this.T - (L / this.V)) / 60);
             }
 
             R = Math.abs(R);

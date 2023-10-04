@@ -3,58 +3,16 @@ function mapValue(value, start1, stop1, start2, stop2) {
     return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
 }
 
-export default class Parameters {
-    constructor(app, chladni, draggablePoints, grid) {
-        this.parametersChanged = false;  // Add this flag
-        this.debugText = new PIXI.Text('', {
-            fontFamily: 'monospace',
-            fontSize: 14,
-            fill: 0xa0a0a0,
-        });
-
+export default class InputHandler {
+    constructor(app) {
         this.app = app;
-        this.chladni=chladni;
-        this.grid=grid;
-        this.draggablePoints=draggablePoints;
-
-        // this.N = N_;
-        // this.p = [];
-        // this.V = 0.5;
-        // this.F = 0.15;
-        // this.PV = -1.5;
-        // this.d = 1;
-        //this.T = 0;
-        //this.TT = 1;
-        this.nodes = draggablePoints.map(
-                point => ({ x: point.x, y: point.y })
-            );
-
-        //this.particles = [];
+        this.parametersChanged = false;
     }
 
     cursorPositionCallback(event) {
         // Display the x and y values in the corner
         displayCoordinates(cursorX, cursorY);
     }
-
-    displayParameters(x, y) {
-        let chladni = this.chladni;
-        // Extract non-circular properties from chladni for display
-        const debugInfo = {
-            N: chladni.N,
-            V: chladni.V,
-            F: chladni.F,
-            PV: chladni.PV,
-            d: chladni.d,
-            T: chladni.T,
-            TT: chladni.TT,
-        };
-
-        // Update the PIXI Text object
-        debugText.text =d
-            `x: ${x}, y: ${y}\n${JSON.stringify(debugInfo, null, 2)}`;
-    }
-
 
     handleMouseEvents(event){
         let chladni=this.chladni;
@@ -72,24 +30,14 @@ export default class Parameters {
 
     }
 
-    setApp(app){
-        this.app=app;
-    }
-    setGrid(grid){
-        this.grid=grid;
-    }
-    setChladni(chladni){
-        this.chladni=chladni;
-    }
     init(){
         let app = this.app;
-        this.app.stage.addChild(this.debugText);
 
         document.addEventListener('keydown', event => {
             if (event.key === 'g') {
-                this.grid.showGradient = !this.grid.showGradient;
-                this.parametersChanged = true;  // Set the flag when parameters change
-
+                //app.gradient.showGradient = !app.gradient.showGradient;
+                //app.eventBus.publish('parametersChanged', event.data);
+                app.eventBus.publish('toggleGradient', event.data);
             }
             if (event.key === 'ArrowUp') {
                 this.chladni.TT *= 1.1;
@@ -98,13 +46,13 @@ export default class Parameters {
             if (event.key === 'ArrowDown') {
                 this.chladni.TT /= 1.1;
             }
-            if (event.key === 'g') {
+            if (event.key === 'h') {
             }
 
         });
 
 
-        window.addEventListener('mousemove',this.handleMouseEvents.bind(this));
+       // window.addEventListener('mousemove',this.handleMouseEvents.bind(this));
     }
 
         /*
