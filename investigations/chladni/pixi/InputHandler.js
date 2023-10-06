@@ -14,74 +14,55 @@ export default class InputHandler {
         displayCoordinates(cursorX, cursorY);
     }
 
-    handleMouseEvents(event){
-        let chladni=this.chladni;
-        let app=this.app;
-        //this.parametersChanged = false;  // Set the flag when parameters change
 
-        if (event.shiftKey===true && event.ctrlKey===false) {
-            chladni.V = mapValue(event.clientX, 0,
-            app.view.width, .01, 1);
-            chladni.PV = mapValue(event.clientY, 0,
-            app.view.height, 0, 1.5);
-            this.parametersChanged = true;  // Set the flag when parameters change
+    handleClick(event) {
+        const x = event.clientX;
+        const y = event.clientY;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
 
+        const hotCornerSize = this.app.vars.y; // top bar height
+        this.app.eventBus.publish('click', event);
+
+
+        if (x < hotCornerSize) {
+            if (y < 50) {
+                this.app.eventBus.publish('hotCornerUpperLeft');
+                console.log('Upper left', x, y);
+            } else if (y > height - hotCornerSize) {
+                this.app.eventBus.publish('hotCornerLowerLeft');
+            }
+        } else if (x > width - hotCornerSize) {
+            if (y < 50) {
+                this.app.eventBus.publish('hotCornerUpperRight');
+            } else if (y > height - hotCornerSize) {
+                this.app.eventBus.publish('hotCornerLowerRight');
+            }
         }
-
     }
 
     init(){
         let app = this.app;
 
-        document.addEventListener('keydown', event => {
-            if (event.key === 'g') {
-                //app.gradient.showGradient = !app.gradient.showGradient;
-                //app.eventBus.publish('parametersChanged', event.data);
-                app.eventBus.publish('toggleGradient', event.data);
-            }
-            if (event.key === 'ArrowUp') {
-                this.chladni.TT *= 1.1;
-
-            }
-            if (event.key === 'ArrowDown') {
-                this.chladni.TT /= 1.1;
-            }
-            if (event.key === 'h') {
-            }
-
+        window.addEventListener('resize', (event) => {
+            event.newWidth = window.innerWidth;
+            event.newHeight = window.innerHeight;
+            this.app.eventBus.publish('resize', event);
         });
 
+        document.addEventListener('keydown', event => {
+            if (event.repeat) return; // Ignore holding down key
+            app.eventBus.publish('keypress',
+                { key: event.key, event: event });
+        });
 
-       // window.addEventListener('mousemove',this.handleMouseEvents.bind(this));
+        window.addEventListener('click', (event) => {
+            this.handleClick(event);
+        });
+
+        window.addEventListener('mousemove', (event) => {
+            app.eventBus.publish('mousemove', {event: event });
+        });
     }
 
-        /*
-        document.addEventListener('mousemove',
-        function(event) {
-            let chladni=this.chladni;
-            let app=this.app;
-
-            if (event.shiftKey===true && event.ctrlKey===false) {
-                chladni.V = mapValue(event.clientX, 0,
-                app.width, .01, 1);
-                chladni.PV = mapValue(event.clientY, 0,
-                app.height, 0, 1.5);
-            }
-
-            if (event.ctrlKey===true) {
-                chladniInstance.F = mapValue(event.clientX, 0,
-                    app.view.width, 0, .6);
-                chladniInstance.TT = mapValue(event.clientY, 0,
-                    app.view.height, .00001, 1);
-            }
-
-            if (event.buttons === 1 && event.shiftKey===true) {
-                chladniInstance.d = mapValue(event.clientX, 0,
-                    app.view.width, 0, 1);
-                chladniInstance.s= mapValue(event.clientY, 0,
-                    app.view.height, .0001, 1);
-                chladniInstance.init();
-            }
-        });
-         */
 }

@@ -12,18 +12,120 @@
             overflow: hidden;
             height: 100%;
             width: 100%;
+            font-family: "Courier";
         }
-
+        #popup {
+            border: 1px solid white;
+            opacity: 0.9;
+            border-radius: 10px;
+            margin: 0;
+            padding:.5em;
+            background: trasparent;
+            color: grey;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            top:5%;
+            right:5%
+        }
         canvas {
             display: block;
         }
     </style>
     <script src="./node_modules/pixi.js/dist/pixi.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.1/pixi.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.js"
+        crossorigin="anonymous"></script> -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
     <script type="module" src="main.js" defer></script>
 </head>
-
 <body>
-</body>
+    <div id="popup" style="display:none;
+        position:absolute;
+        min-width:40%;
+        max-width:50%;"
+        onclick="document.getElementById('popup').style.display='none'"
 
+    >
+
+      </div>
+</body>
+<div style="display:none">
+    <div id="summary_info">
+        <h2 style="text-align: center">Chladni Sheet</h2>
+
+        <p id="math-content">
+            The distance \( L \) is calculated as:
+            \[
+            L = \sqrt{(p_i.x - s_x)^2 + (p_i.y - s_y)^2}
+            \]
+
+            The value \( C \) is computed with:
+            \[
+            C += \sin\left(2 \pi F \left(T - \frac{L}{V}\right) / 60\right)
+            \]
+
+            Updating the particle position involves calculations:
+            \[
+            L = \sqrt{(R - C)^2 + (D - C)^2}
+            \]
+            \[
+            V_X = PV \times \frac{(R - C)}{L}, \quad V_Y = PV \times \frac{(D - C)}{L}
+            \]
+            \[
+            p_i.x += V_X, \quad p_i.y += V_Y
+            \]
+
+            The final particle position:
+            \[
+            p_i = \{x, y\} = \{p_i.x, p_i.y\}
+            \]
+        </p>
+    </div>
+
+
+
+
+<div id="V_info" class="info">
+    <p><strong>V (Wave Speed)</strong></p>
+    <p>This parameter represents the speed of the wave, denoted as \( V \), and it influences how quickly the wave propagates through the medium. The wave equation, given by</p>
+    <p>\[
+    \frac{{\partial^2 u}}{{\partial t^2}} = V^2 \frac{{\partial^2 u}}{{\partial x^2}}
+    \]</p>
+    <p>shows the direct proportionality between the wave speed \( V \) and the wave's rate of change with respect to time and position.</p>
+</div>
+
+<div id="TT_info" class="info">
+    <p><strong>TT (Time Rate)</strong></p>
+    <p>The parameter \( TT \) denotes the time rate, which influences the wave's evolution over time. It is integral in the wave equation</p>
+    <p>\[
+    \frac{{\partial^2 u}}{{\partial t^2}} = V^2 \frac{{\partial^2 u}}{{\partial x^2}}
+    \]</p>
+    <p>where \( \frac{{\partial^2 u}}{{\partial t^2}} \) signifies the second derivative of displacement \( u \) with respect to time, affected by \( TT \).</p>
+</div>
+
+<div id="F_info" class="info">
+    <p><strong>F (Frequency)</strong></p>
+    <p>The frequency parameter \( F \) determines the number of oscillations or cycles
+        that occur per unit of time. It's an input to a sinusoidal wave function</p>
+    <p>\[
+    y(x, t) = A \sin(kx - \omega t)
+    \]</p>
+    <p>where \( \omega = 2\pi F \) is the angular frequency, dependent on \( F \).</p>
+</div>
+
+<div id="PV_info" class="info">
+    <p><strong>PV (Particle Velocity)</strong></p>
+    <p>This parameter, denoted as \( PV \), represents the velocity of particles affected by the wave. It influences the speed and direction of particles as the wave propagates, contributing to phenomena like reflection and refraction. The particle velocity is calculated using</p>
+    <p>\[
+    PV = \frac{{\partial u}}{{\partial t}}
+    \]</p>
+    <p>indicating the rate of change of displacement with respect to time.</p>
+</div>
+
+</div>
 </html>

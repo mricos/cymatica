@@ -84,8 +84,6 @@ export default class Gradient {
         }
 
         const range = maxInfluence - minInfluence;
-
-        // Use a single PIXI.Graphics object to batch draw calls
         const graphics = new PIXI.Graphics();
         this.container.addChild(graphics);
 
@@ -108,7 +106,6 @@ export default class Gradient {
         }else{
             this.clear();
         }
-
     }
 }
 
