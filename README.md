@@ -11,3 +11,7 @@ It is rumored that an old Cymatix video console was found at a flea market in Fa
 ## References
 
 1. [Resonant Waves: Immersed in Geometry](https://escholarship.org/uc/item/7745j4fh)
+1. [Lucio Paiva's Chaldni JS](https://luciopaiva.com/chladni/)
+3. [Paul Bourke's analysis](https://paulbourke.net/geometry/chladni/)
+4. [KaijinQ's OP sketch](https://openprocessing.org/sketch/715119)
+
