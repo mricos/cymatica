@@ -4,8 +4,8 @@
   "description": "realtime vector art generator",
   "main": "index.js",
   "scripts": {
-    "start": "parcel index.html"
-    "build": "parcel build index.html"
+    "start": "parcel index.html",
+    "build": "parcel index.html"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,3 @@
     "parcel": "^2.10.3"
   }
 }
-
-
