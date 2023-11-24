@@ -1,0 +1,25 @@
+{
+  "name": "vector",
+  "version": "1.0.0",
+  "description": "realtime vector art generator",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/mricos/cymatica.git"
+  },
+  "author": "Mike Ricos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mricos/cymatica/issues"
+  },
+  "homepage": "https://github.com/mricos/cymatica#readme",
+  "dependencies": {
+    "pixi.js": "^7.3.2"
+  },
+  "devDependencies": {
+    "parcel": "^2.10.3"
+  }
+}
