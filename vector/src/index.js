@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { createWave } from './wave';
+import VectorUI from './VectorUI';
 
 function getURLParams() {
     const params = new URLSearchParams(window.location.search);
@@ -19,7 +20,12 @@ function setup() {
     document.body.appendChild(app.view);
 
     const params = getURLParams();
-    createWave(app, params);
+    let wave = new Wave(app, params);
+
+    app.ticker.add((delta) => {
+        wave.update(delta);
+        wave.draw();
+    });
 }
 
 setup();
