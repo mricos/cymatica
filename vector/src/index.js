@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { createWave } from './wave';
+import { Wave } from './Wave';
 import VectorUI from './VectorUI';
 
 function getURLParams() {
