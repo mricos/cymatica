@@ -4,7 +4,7 @@ Cymatica is an investigation of digital cymatics, see Richard Grillotti's thesis
 
 - **[chladni](https://chladni.coilflow.com/)**: Javascript class, fast analog approximation, with features
 - **[vector](https://vector.coilflow.com)**: vector stream generator
-- **[shere](./investigations/sphere)** Cross-platform c++, for realtime modulation and projection
+- **[sphere](./investigations/sphere)** Cross-platform c++, for realtime modulation and projection
 
 It is rumored that an old Cymatix video console was found at a flea market in Fairfield Iowa along with a [ZRanikov2](./investigations/sightings/02.png).
 
