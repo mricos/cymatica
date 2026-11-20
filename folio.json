@@ -1,19 +1,8 @@
 {
-  "collection": "cymatica",
   "type": "app",
   "title": "folio:cymatica — a vector arcade cabinet on the v99 engine, builds to web (today) and tauri (planned)",
   "version": "0.1.0",
-  "note": "DRAFT 2026-11-20 (crew:wr-devpages-refactor:10), not yet in the cymatica repo. Cymatica disguises a standing-wave apparatus as a vector arcade game (docs/DEVELOPER.md:3). Game code lives in the engines/v99 submodule (cymatica branch); this repo holds lore, research, a companion server and earlier prototypes. Team membership is NOT here: it lives in pbase folio-members/<folio-id>.json. Build recipes are cited from engines/v99/package.json and engines/v99/tsm/env.toml; anything marked planned does not exist yet.",
-  "targets": {
-    "web": {
-      "enabled": true
-    },
-    "tauri": {
-      "enabled": false,
-      "note": "planned: no tauri.conf.json or Cargo.toml exists. v99 ships electron (engines/v99/electron) and capacitor/iOS (engines/v99/capacitor) targets instead."
-    },
-    "note": "targets keep the existing schema shape (web, tauri, note; each {enabled}); the richer per-surface description is in surfaces below"
-  },
+  "note": "Cymatica disguises a standing-wave apparatus as a vector arcade game (docs/DEVELOPER.md:3). Game code lives in the engines/v99 submodule (cymatica branch); this repo holds lore, research, a companion server and earlier prototypes. Schema: devops tetra/docs/folios/folio.schema.json (rev 2, greenfield 2026-11-20). Team membership is NOT here: it lives in pbase folio-members/<folio-id>.json. Build recipes are cited from engines/v99/package.json and engines/v99/tsm/env.toml; anything marked planned does not exist yet.",
   "surfaces": {
     "web": {
       "status": "exists",
@@ -92,11 +81,13 @@
       "members": [
         {
           "source": "README.md",
-          "note": "repo home"
+          "note": "repo home",
+          "id": "readme-md"
         },
         {
           "source": "docs/DEVELOPER.md",
-          "note": "repo map, quick start, architecture, cabinet state machine, shortcuts"
+          "note": "repo map, quick start, architecture, cabinet state machine, shortcuts",
+          "id": "docs-developer-md"
         }
       ]
     },
@@ -105,21 +96,26 @@
       "members": [
         {
           "source": "docs/digital_cymatics.md",
-          "note": "theory notes"
+          "note": "theory notes",
+          "id": "docs-digital-cymatics-md"
         },
         {
           "source": "docs/chladni_spheres.md",
-          "note": "listed in README.md but not present on disk; remove or restore"
+          "note": "listed in README.md but not present on disk; remove or restore",
+          "id": "docs-chladni-spheres-md"
         },
         {
           "source": "docs/history.txt",
-          "note": "The Legend of Cymatica"
+          "note": "The Legend of Cymatica",
+          "id": "docs-history-txt"
         },
         {
           "source": "docs/specs/i18n.md",
-          "note": "locale architecture"
+          "note": "locale architecture",
+          "id": "docs-specs-i18n-md"
         }
       ]
     }
-  ]
+  ],
+  "id": "cymatica"
 }
