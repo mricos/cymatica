@@ -1,0 +1,125 @@
+{
+  "collection": "cymatica",
+  "type": "app",
+  "title": "folio:cymatica — a vector arcade cabinet on the v99 engine, builds to web (today) and tauri (planned)",
+  "version": "0.1.0",
+  "note": "DRAFT 2026-11-20 (crew:wr-devpages-refactor:10), not yet in the cymatica repo. Cymatica disguises a standing-wave apparatus as a vector arcade game (docs/DEVELOPER.md:3). Game code lives in the engines/v99 submodule (cymatica branch); this repo holds lore, research, a companion server and earlier prototypes. Team membership is NOT here: it lives in pbase folio-members/<folio-id>.json. Build recipes are cited from engines/v99/package.json and engines/v99/tsm/env.toml; anything marked planned does not exist yet.",
+  "targets": {
+    "web": {
+      "enabled": true
+    },
+    "tauri": {
+      "enabled": false,
+      "note": "planned: no tauri.conf.json or Cargo.toml exists. v99 ships electron (engines/v99/electron) and capacitor/iOS (engines/v99/capacitor) targets instead."
+    },
+    "note": "targets keep the existing schema shape (web, tauri, note; each {enabled}); the richer per-surface description is in surfaces below"
+  },
+  "surfaces": {
+    "web": {
+      "status": "exists",
+      "entry": "engines/v99/browser/index.html",
+      "root": "engines/v99",
+      "dev": {
+        "tsm": "cymatica-v99-local-dev",
+        "command": "npm run dev-browser",
+        "cite": "engines/v99/package.json scripts.dev-browser; tsm form engines/v99/tsm/env.toml [local-dev] (vite, port 5173+, no --open)",
+        "port": 5173,
+        "open": "/?ultra=1"
+      },
+      "build": {
+        "command": "npm run build-browser",
+        "cite": "engines/v99/package.json scripts.build-browser -> `npm run build --prefix ./browser` -> vite build (browser/package.json)",
+        "output": "engines/v99/browser/ (vite outDir not set in browser/vite.config.js; actual dist dir unverified, not built)"
+      },
+      "preview": {
+        "tsm": "local-prod",
+        "command": "npm run preview --prefix ./browser -- --host --port $PORT",
+        "cite": "engines/v99/tsm/env.toml [local-prod], port 8010"
+      },
+      "setup": {
+        "command": "npm run setup",
+        "cite": "engines/v99/package.json scripts.setup"
+      }
+    },
+    "tauri": {
+      "status": "planned",
+      "entry": null,
+      "build": null,
+      "note": "nothing exists. The web build above is the likely webview payload; the tauri shell (src-tauri, tauri.conf.json) must be created. Existing non-tauri native paths: electron (build-mac, build-mac-intel, build-windows) and capacitor iOS (build-ios, build-ios-release), engines/v99/package.json scripts."
+    }
+  },
+  "dirs": {
+    "engine": "engines/v99",
+    "game": "engines/v99/src/examples",
+    "locales": "engines/v99/src/examples/locales",
+    "server": "server",
+    "stations": "stations",
+    "vector": "vector",
+    "docs": "docs",
+    "investigations": "investigations"
+  },
+  "submodules": [
+    {
+      "path": "engines/v99",
+      "url": "git@github.com:mricos/v99.git",
+      "branch": "cymatica",
+      "cite": ".gitmodules"
+    }
+  ],
+  "editable": {
+    "note": "hint for devpages: what the editor pane may open. Nothing outside these is offered; submodule paths are edited in their own repo.",
+    "include": [
+      "docs/**/*.md",
+      "docs/**/*.txt",
+      "README.md",
+      "stations/**/*.json",
+      "engines/v99/src/examples/locales/*.js"
+    ],
+    "exclude": [
+      "**/node_modules/**",
+      "vector/dist/**",
+      "docs/art/**",
+      "investigations/**"
+    ]
+  },
+  "manifests": {
+    "game": "engines/v99/game.toml",
+    "note": "game.toml stays the game's identity/catalog manifest (slug, name, version, entry, features). folio.json says what the REPO is and how it builds; it does not copy game.toml fields."
+  },
+  "sections": [
+    {
+      "title": "Start here",
+      "members": [
+        {
+          "source": "README.md",
+          "note": "repo home"
+        },
+        {
+          "source": "docs/DEVELOPER.md",
+          "note": "repo map, quick start, architecture, cabinet state machine, shortcuts"
+        }
+      ]
+    },
+    {
+      "title": "Research and lore",
+      "members": [
+        {
+          "source": "docs/digital_cymatics.md",
+          "note": "theory notes"
+        },
+        {
+          "source": "docs/chladni_spheres.md",
+          "note": "listed in README.md but not present on disk; remove or restore"
+        },
+        {
+          "source": "docs/history.txt",
+          "note": "The Legend of Cymatica"
+        },
+        {
+          "source": "docs/specs/i18n.md",
+          "note": "locale architecture"
+        }
+      ]
+    }
+  ]
+}
